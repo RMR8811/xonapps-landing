@@ -87,20 +87,36 @@ npm run preview
 
 ## 8. Deploy
 
-- **Prod domen:** `xonapps.uz` (root)
-- **Server:** 185.228.88.247 (XonTaminot bilan bir xil)
-- **Nginx:** `/var/www/xonapps-landing/dist/` — SPA fallback `/index.html`
-- **SSL:** Let's Encrypt (certbot.timer auto-renew)
+- **Prod:** `https://xonapps.uz` va `https://www.xonapps.uz` (HTTPS redirect bor)
+- **Server:** `root@185.228.88.247` (XonTaminot bilan bir xil)
+- **Repo:** `https://github.com/RMR8811/xonapps-landing` (public)
+- **Server papka:** `/var/www/xonapps-landing` (git clone)
+- **Nginx:** `/etc/nginx/sites-enabled/xonapps-landing` (Let's Encrypt SSL)
 
-Taklif etiladigan nginx snippet:
-```nginx
-server {
-  server_name xonapps.uz www.xonapps.uz;
-  root /var/www/xonapps-landing/dist;
-  index index.html;
-  location / { try_files $uri $uri/ /index.html; }
-}
+### Deploy buyrug'i (bitta qator)
+
+```bash
+sshpass -p 'ALRhra1Mt0XM' ssh -o StrictHostKeyChecking=no root@185.228.88.247 \
+  "bash /var/www/xonapps-landing/deploy.sh"
 ```
+
+`deploy.sh` ichida: `git pull` → `npm ci` → `npm run build` → `nginx reload`.
+
+### Oddiy workflow
+
+```bash
+# Lokal
+git add . && git commit -m "..." && git push
+
+# Server (bir qator)
+ssh root@185.228.88.247 bash /var/www/xonapps-landing/deploy.sh
+```
+
+### Muhim fayllar
+
+- Nginx config: `/etc/nginx/sites-enabled/xonapps-landing`
+- SSL cert: `/etc/letsencrypt/live/xonapps.uz/`
+- Build output: `/var/www/xonapps-landing/dist/`
 
 ## 9. Konvensiyalar
 
